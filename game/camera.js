@@ -7,29 +7,13 @@ function Camera(canvas, focalLength) {
     this.focalLength = focalLength || 0.8;
     this.range = MOBILE ? 8 : 14;
     this.scale = (this.width + this.height) / 1200;
+    this.background = new Background(this.ctx, this.width, this.height);
 }
 
 Camera.prototype.render = function (player, map) {
-    this.drawBackground();
+    this.background.render();
     this.drawColumns(player, map);
 };
-
-Camera.prototype.drawBackground = function () {
-    this.ctx.save();
-
-    // sky
-    this.ctx.fillStyle = BG_COLOR;
-    this.ctx.fillRect(0, 0, this.width, this.height);
-
-    // floor
-    var gradient = this.ctx.createLinearGradient(0, this.height * 0.5, 0, this.height);
-    gradient.addColorStop(0, BG_COLOR);
-    gradient.addColorStop(1, FG_COLOR);
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(0, this.height * 0.5, this.width, this.height);
-
-    this.ctx.restore();
-}
 
 Camera.prototype.drawColumns = function (player, map) {
     this.ctx.save();
