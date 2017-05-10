@@ -11,7 +11,7 @@ function Camera(canvas, focalLength) {
 }
 
 Camera.prototype.render = function (player, map) {
-    this.background.render();
+    this.background.render(player.direction);
     this.drawColumns(player, map);
 };
 

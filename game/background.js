@@ -1,7 +1,9 @@
+
 function Background(ctx, width, height) {
     this.ctx = ctx;
     this.width = width;
     this.height = height;
+    this.STARS_PANORAMA_WIDTH = this.width * 3;
     this.randomizeStars();
 }
 
@@ -10,16 +12,16 @@ Background.prototype.randomizeStars = function () {
     this.stars = [];
     for (var i = 0; i < nbStars; i++) {
         this.stars.push({
-            x: Math.floor(Math.random() * this.width * 4), // represents 360°
-            y: Math.floor(Math.random() * this.height * 0.45), // not too close to the horizon (0.5)
+            x: Math.floor(Math.random() * this.STARS_PANORAMA_WIDTH),
+            y: Math.floor(Math.random() * this.height * 0.45), // we stop close to the horizon (0.5)
             alpha: Math.random()
         });
     }
 }
 
-Background.prototype.render = function () {
+Background.prototype.render = function (direction) {
     this.renderBackground();
-    this.renderStars();
+    this.renderStars(direction);
 }
 
 Background.prototype.renderBackground = function () {
@@ -33,13 +35,16 @@ Background.prototype.renderBackground = function () {
     this.ctx.restore();
 }
 
-Background.prototype.renderStars = function () {
+Background.prototype.renderStars = function (direction) {
     this.ctx.save();
+    var offset = direction / CIRCLE * -this.STARS_PANORAMA_WIDTH;
     this.ctx.fillStyle = 'white';
     for (let star of this.stars) {
         this.ctx.globalAlpha = star.alpha;
-        // TODO: handle player direction / 360°
-        this.ctx.fillRect(star.x, star.y, 1, 1);
+        this.ctx.fillRect(offset + star.x, star.y, 1, 1);
+        if (offset + star.x < this.width) {
+            this.ctx.fillRect(offset + star.x + this.STARS_PANORAMA_WIDTH, star.y, 1, 1);
+        }
     }
     this.ctx.restore();
 }

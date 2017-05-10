@@ -1,3 +1,6 @@
+const WALK_FACTOR = 2
+const ROTATION_FACTOR = 0.5;
+
 function Player(x, y, direction) {
     this.x = x;
     this.y = y;
@@ -18,8 +21,8 @@ Player.prototype.walk = function (distance, map) {
 };
 
 Player.prototype.update = function (controls, map, seconds) {
-    if (controls.left) this.rotate(-Math.PI * seconds);
-    if (controls.right) this.rotate(Math.PI * seconds);
-    if (controls.forward) this.walk(3 * seconds, map);
-    if (controls.backward) this.walk(-3 * seconds, map);
+    if (controls.left) this.rotate(-Math.PI * seconds * ROTATION_FACTOR);
+    if (controls.right) this.rotate(Math.PI * seconds * ROTATION_FACTOR);
+    if (controls.forward) this.walk(WALK_FACTOR * seconds, map);
+    if (controls.backward) this.walk(-WALK_FACTOR * seconds, map);
 };
