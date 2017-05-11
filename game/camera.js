@@ -27,7 +27,6 @@ Camera.prototype.drawColumns = function (player, map) {
 };
 
 Camera.prototype.drawColumn = function (column, ray, angle, map) {
-    var ctx = this.ctx;
     var texture = map.wallTexture;
     var left = Math.floor(column * this.spacing);
     var width = Math.ceil(this.spacing);
@@ -42,12 +41,12 @@ Camera.prototype.drawColumn = function (column, ray, angle, map) {
             var textureX = Math.floor(texture.width * step.offset);
             var wall = this.project(step.height, angle, step.distance);
 
-            ctx.globalAlpha = 1;
-            ctx.drawImage(texture.image, textureX, 0, 1, texture.height, left, wall.top, width, wall.height);
+            this.ctx.globalAlpha = 1;
+            this.ctx.drawImage(texture.image, textureX, 0, 1, texture.height, left, wall.top, width, wall.height);
 
-            ctx.fillStyle = BG_COLOR;
-            ctx.globalAlpha = 0.75;
-            ctx.fillRect(left, wall.top, width, wall.height);
+            this.ctx.fillStyle = BG_COLOR;
+            this.ctx.globalAlpha = 0.75;
+            this.ctx.fillRect(left, wall.top, width, wall.height);
         }
     }
 };
