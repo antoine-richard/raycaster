@@ -13,7 +13,16 @@ Map.prototype.get = function (x, y) {
 
 Map.prototype.randomize = function () {
     for (var i = 0; i < this.size * this.size; i++) {
-        this.wallGrid[i] = Math.random() < 0.3 ? 1 : 0;
+        const rand = Math.random();
+        if (rand < 0.075) {
+            this.wallGrid[i] = 3;
+        } else if (rand < 0.25) {
+            this.wallGrid[i] = 2;
+        } else if (rand < 0.5) {
+            this.wallGrid[i] = 1;
+        } else {
+            this.wallGrid[i] = 0;
+        }
     }
 };
 

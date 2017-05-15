@@ -1,5 +1,5 @@
-const WALK_FACTOR = 2
-const ROTATION_FACTOR = 0.5;
+const WALK_FACTOR = 2; //3;
+const ROTATION_FACTOR = 0.5; //1;
 
 function Player(x, y, direction) {
     this.x = x;

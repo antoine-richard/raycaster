@@ -12,42 +12,50 @@ function Camera(canvas, focalLength) {
 
 Camera.prototype.render = function (player, map) {
     this.background.render(player.direction);
-    this.drawColumns(player, map);
+    this.renderColumns(player, map);
 };
 
-Camera.prototype.drawColumns = function (player, map) {
+Camera.prototype.renderColumns = function (player, map) {
     this.ctx.save();
     for (var column = 0; column < this.resolution; column++) {
         var x = column / this.resolution - 0.5;
         var angle = Math.atan2(x, this.focalLength);
         var ray = map.cast(player, player.direction + angle, this.range);
-        this.drawColumn(column, ray, angle, map);
+        var walls = this.filterVisibleWalls(ray);
+        this.renderColumn(column, walls, angle, map);
     }
     this.ctx.restore();
 };
 
-Camera.prototype.drawColumn = function (column, ray, angle, map) {
+Camera.prototype.filterVisibleWalls = function (ray) {
+    var walls = [];
+    var hit = -1, lastHeight = 0;
+    while (++hit < ray.length) {
+        if (ray[hit].height > lastHeight) {
+            walls.push(ray[hit]);
+            lastHeight = ray[hit].height;
+        }
+    }
+    return walls;
+}
+
+Camera.prototype.renderColumn = function (column, walls, angle, map) {
     var texture = map.wallTexture;
     var left = Math.floor(column * this.spacing);
     var width = Math.ceil(this.spacing);
-    var hit = -1;
+    
+    for (var s = walls.length - 1; s >= 0; s--) {
+        var step = walls[s];
 
-    while (++hit < ray.length && ray[hit].height <= 0);
+        var textureX = Math.floor(texture.width * step.offset);
+        var wall = this.project(step.height, angle, step.distance);
+        
+        this.ctx.globalAlpha = 1;
+        this.ctx.drawImage(texture.image, textureX, 0, 1, texture.height, left, wall.top, width, wall.height);
 
-    for (var s = ray.length - 1; s >= 0; s--) {
-        var step = ray[s];
-
-        if (s === hit) {
-            var textureX = Math.floor(texture.width * step.offset);
-            var wall = this.project(step.height, angle, step.distance);
-
-            this.ctx.globalAlpha = 1;
-            this.ctx.drawImage(texture.image, textureX, 0, 1, texture.height, left, wall.top, width, wall.height);
-
-            this.ctx.fillStyle = BG_COLOR;
-            this.ctx.globalAlpha = 0.75;
-            this.ctx.fillRect(left, wall.top, width, wall.height);
-        }
+        this.ctx.fillStyle = BG_COLOR;
+        this.ctx.globalAlpha = 0.75;
+        this.ctx.fillRect(left, wall.top, width, wall.height);
     }
 };
 
